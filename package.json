@@ -1,0 +1,21 @@
+{
+  "name": "cc.io.file-system",
+  "version": "0.1.0",
+  "title": "IO File system Module",
+  "description": "IO module that implements file protocol support.",
+  "bugs": null,
+  "license": "Apache-2.0",
+  "author": null,
+  "contributors": null,
+  "main": "file-system.js",
+  "dependencies": [
+    "drivelist"
+  ],
+  "pkxDependencies": [
+    "cc.event.0.1",
+    "cc.host.0.1",
+    "cc.string.0.1",
+    "cc.type.0.1",
+    "cc.io.0.1"
+  ]
+}
