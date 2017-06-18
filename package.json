@@ -1,12 +1,9 @@
 {
   "name": "cc.io.file-system",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "title": "IO File system Module",
   "description": "IO module that implements file protocol support.",
-  "bugs": null,
   "license": "Apache-2.0",
-  "author": null,
-  "contributors": null,
   "main": "file-system.js",
   "dependencies": [
     "drivelist"
