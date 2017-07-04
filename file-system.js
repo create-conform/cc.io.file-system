@@ -9,7 +9,7 @@
 //
 // Copyright Nick Verlinden (info@createconform.com)
 //
-///////////////////////////////////////////////////////////////////////////////////////////// 
+/////////////////////////////////////////////////////////////////////////////////////////////
 
 (function() {
     function FileSystem(pkx, module) {
@@ -32,7 +32,7 @@
             nodePath = require("path");
         }
         else {
-            throw "The runtime does not support file system access.";
+            return "The runtime does not support file system access.";
         }
 
         this.PROTOCOL_FILESYSTEM = "file";
@@ -329,7 +329,7 @@
             this.scope = io.VOLUME_SCOPE_LOCAL;
             this.class = io.VOLUME_CLASS_PERSISTENT;
             this.readOnly = driveInfo.protected;
-            this.localId = //crypt.guid(crypt.md5(this.name + "/" + this.description + "/" + this.device + "/" + drivePath));
+            this.localId = "";//crypt.guid(crypt.md5(this.name + "/" + this.description + "/" + this.device + "/" + drivePath));
 
             this.query = function(path) {
                 //show refuse with a file not found error if the path does not exist, and a file object if it does.
