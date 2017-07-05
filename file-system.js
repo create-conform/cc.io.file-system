@@ -421,7 +421,7 @@
                 }
                 else if (type.isString(uri)) {// && host.features.includes(host.FEATURE_IO_FILE_SYSTEM)) {
                     if (process && process.cwd) {
-                        var path = process.cwd().replace(/\\/g, "/");
+                        var path = "/" + process.cwd().replace(/\\/g, "/");
                         if (path.lastIndexOf("/") != path.length - 1) {
                             path += "/";
                         }
