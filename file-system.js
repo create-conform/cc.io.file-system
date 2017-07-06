@@ -54,6 +54,7 @@
 
                     if (path == dir) {
                         resolve();
+                        return;
                     }
 
                     fs.mkdir(dir, function(err) {

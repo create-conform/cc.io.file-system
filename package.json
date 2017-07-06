@@ -1,6 +1,6 @@
 {
   "name": "cc.io.file-system",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "title": "IO File system Module",
   "description": "IO module that implements file protocol support.",
   "license": "Apache-2.0",
