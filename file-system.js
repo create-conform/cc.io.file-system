@@ -35,6 +35,47 @@
             return "The runtime does not support file system access.";
         }
 
+        function createPath(path) {   
+            return new Promise(function(resolve, reject) {
+                function mkdir(dir) {
+                    var next;
+                    var idx = path.indexOf(nodePath.sep, dir.length + 1);
+                    if (idx >= 0) {
+                        next = path.substr(0, idx);
+                    }
+                    else {
+                        next = path;
+                    }
+
+                    if (!dir) {
+                        mkdir(next);
+                        return;
+                    }
+
+                    if (path == dir) {
+                        resolve();
+                    }
+
+                    fs.mkdir(dir, function(err) {
+                        if (err && err.code != "EEXIST") {
+                            reject(new Error("Could not create directory '" + dir + "'. Code: '" + err.code + "'."));
+                            return;
+                        }
+                        
+                        // this conditional block would also create the last part in a path (this could be a filename, that's why it is disabled)
+                        //if (path == dir) {
+                        //    resolve();
+                        //}
+                        //else {
+                            mkdir(next);
+                        //}
+                    });
+                }
+
+                mkdir("");
+            });
+        }
+
         this.PROTOCOL_FILESYSTEM = "file";
 
         this.FORMAT_PATH_WINDOWS = "format-path-windows";
@@ -229,9 +270,10 @@
 
             this.events = new event.Emitter(this);
         };
-        this.FileSystemStream.open = function(path, opt_access) {
+        this.FileSystemStream.open = function(path, opt_access, opt_create) {
             return new Promise(function(resolve, reject) {
                 var access = "";
+                var attemptCreate;
                 if (!fs) {
                     reject(new Error(io.ERROR_RUNTIME, "The runtime does not support access to the local file system."));
                     return;
@@ -299,7 +341,14 @@
                 function handleError(err) {
                     if (err) {
                         if (err.code == "ENOENT") {
-                            reject(new Error(io.ERROR_FILE_NOT_FOUND, ""));
+                            if (opt_create && !attemptCreate) {
+                                attemptCreate = true;
+                                createPath(path).then(function() {
+                                    openFile();
+                                }, function() {
+                                    reject(new Error(io.ERROR_FILE_NOT_FOUND, ""));
+                                });
+                            }
                         }
                         else if (err.code == "EACCES") {
                             reject(new Error(io.ERROR_ACCESS_DENIED, ""));
@@ -361,8 +410,8 @@
                 });
             };
 
-            this.open = function(path, opt_access) {
-                return self.uri.open(drivePath + path, opt_access);
+            this.open = function(path, opt_access, opt_create) {
+                return self.uri.open(drivePath + path, opt_access, opt_create);
             };
 
             this.events = new event.Emitter(this);
@@ -431,7 +480,7 @@
                 }
             }
         };
-        this.uri.open = function(uri, opt_access) {
+        this.uri.open = function(uri, opt_access, opt_create) {
             if (uri && type.isString(uri)) {
                 uri = self.uri.parse(uri);
             }
@@ -441,7 +490,7 @@
             if (!uri) {
                 throw new Error(io.ERROR_URI_PARSE, "");
             }
-            return self.FileSystemStream.open(uri.toString((process.platform == "win32" ? self.FORMAT_PATH_WINDOWS : io.FORMAT_PATH), nodePath.sep), opt_access);
+            return self.FileSystemStream.open(uri.toString((process.platform == "win32" ? self.FORMAT_PATH_WINDOWS : io.FORMAT_PATH), nodePath.sep), opt_access, opt_create);
         };
         this.uri.exists = function(uri) {
             return new Promise(function(resolve, reject) {
