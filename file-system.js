@@ -305,26 +305,21 @@
                         access = "r";
                         break;
                 }
-                if (opt_access == io.ACCESS_MODIFY) {
-                    fs.lstat(path, function(err) {
-                        if (err)
-                        {
-                            if (err.code == "ENOENT") {
-                                access = "w+";
-                                openFile();
-                            }
-                            else {
-                                handleError(err);
-                            }
-                        }
-                        else {
+                fs.lstat(path, function(err) {
+                    if (err)
+                    {
+                        if (err.code == "ENOENT" && (opt_access == io.ACCESS_MODIFY || opt_create)) {
+                            access = "w+";
                             openFile();
                         }
-                    });
-                }
-                else {
-                    openFile();
-                }
+                        else {
+                            handleError(err);
+                        }
+                    }
+                    else {
+                        openFile();
+                    }
+                });
                 function openFile() {
                     fs.open(path, access, function (err, fd) {
                         if (err) {
