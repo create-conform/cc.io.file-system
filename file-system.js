@@ -553,6 +553,59 @@
                 });
             });
         };
+        this.uri.query = function(uri) {
+            return new Promise(function(resolve, reject) {
+                if (uri && type.isString(uri)) {
+                    uri = self.uri.parse(uri);
+                }
+                else if (uri && (typeof uri.scheme == "undefined" || typeof uri.path == "undefined")) {
+                    uri = null;
+                }
+                if (!uri) {
+                    reject(new Error(io.ERROR_URI_PARSE, ""));
+                    return;
+                }
+                
+                //find volume of uri
+                var entries = [];
+                var errCount = 0;
+                var dir = uri.path.substr(1);
+                var lastIdx = dir.lastIndexOf("/");
+                if (lastIdx != dir.length - 1) {
+                    dir = dir.substr(0, lastIdx);
+                }
+                fs.readdir(dir, function(err, files) {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+
+                    files.map(function (file) {
+                        return nodePath.join(dir, file);
+                    }).map(function (file) {
+                        fs.stat(file, function(err, stats) {
+                            if (err) {
+                                errCount++;
+                                return;
+                            }
+
+                            try {
+                                entries.push(io.URI.parse("/" + file + (stats.isFile()? "" : "/")));
+                            }
+                            catch(e) {
+                                console.error(e);
+                                errCount++;
+                                return;
+                            }
+
+                            if (entries.length == (files.length - errCount)) {
+                                resolve(entries);
+                            }
+                        });
+                    });
+                });
+            });
+        };
         this.uri.toString = function(uri, opt_format) {
             if (uri && type.isString(uri)) {
                 uri = self.uri.parse(uri);
