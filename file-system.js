@@ -580,7 +580,7 @@
                 //find volume of uri
                 var entries = [];
                 var errCount = 0;
-                var dir = uri.path.substr(1);
+                var dir = host.platform == host.PLATFORM_WINDOWS? uri.path.substr(1) : uri.path;
                 var lastIdx = dir.lastIndexOf("/");
                 if (lastIdx != dir.length - 1) {
                     dir = dir.substr(0, lastIdx);
@@ -601,7 +601,7 @@
                             }
 
                             try {
-                                entries.push(io.URI.parse("/" + file + (stats.isFile()? "" : "/")));
+                                entries.push(io.URI.parse((host.platform == host.PLATFORM_WINDOWS? "/" : "") + file + (stats.isFile()? "" : "/")));
                             }
                             catch(e) {
                                 console.error(e);
