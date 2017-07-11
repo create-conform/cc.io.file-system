@@ -242,7 +242,7 @@
                     }
                 });
             };
-            this.close = function ()
+            this.close = function (remove)
             {
                 return new Promise(function(resolve, reject) {
                     if (closed) {
@@ -264,6 +264,17 @@
                             return;
                         }
                         closed = true;
+
+                        if (remove) {
+                            fs.unlink(path, function(err) {
+                                if (err) {
+                                    reject(err);
+                                    return;
+                                }
+                                resolve();
+                            })
+                            return;
+                        }
                         resolve();
                     });
                 });
