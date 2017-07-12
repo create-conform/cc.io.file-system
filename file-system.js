@@ -591,6 +591,11 @@
                         return;
                     }
 
+                    if (!files || files.length == 0) {
+                        resolve([]);
+                        return;
+                    }
+
                     files.map(function (file) {
                         return nodePath.join(dir, file);
                     }).map(function (file) {
