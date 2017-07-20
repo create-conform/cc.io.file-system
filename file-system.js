@@ -347,15 +347,13 @@
 
                 function handleError(err) {
                     if (err) {
-                        if (err.code == "ENOENT") {
-                            if (opt_create && !attemptCreate) {
-                                attemptCreate = true;
-                                createPath(path).then(function() {
-                                    openFile();
-                                }, function() {
-                                    reject(new Error(io.ERROR_FILE_NOT_FOUND, ""));
-                                });
-                            }
+                        if (err.code == "ENOENT" && opt_create && !attemptCreate) {
+                            attemptCreate = true;
+                            createPath(path).then(function() {
+                                openFile();
+                            }, function() {
+                                reject(new Error(io.ERROR_FILE_NOT_FOUND, ""));
+                            });
                         }
                         else if (err.code == "EACCES") {
                             reject(new Error(io.ERROR_ACCESS_DENIED, ""));
